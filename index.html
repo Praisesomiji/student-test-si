@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#1f3a4d">
+<script>(function(){var t=null;try{t=localStorage.getItem("jss3theme")}catch(e){}if(!t)t=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.dataset.theme=t})()</script>
 <title>JSS3 Building Construction – Mock CA</title>
 <style>
-:root{--paper:#f4f6f7;--card:#fff;--ink:#1c2b36;--mute:#5c6b76;--line:#d5dce1;--brand:#1f3a4d;--hi:#e8a817;--ok:#23794a;--okbg:#e3f4ea;--bad:#b3341f;--badbg:#fbe6e2}
+:root{--paper:#f4f6f7;--card:#fff;--ink:#1c2b36;--mute:#5c6b76;--line:#d5dce1;--brand:#1f3a4d;--hi:#e8a817;--ok:#23794a;--okbg:#e3f4ea;--bad:#b3341f;--badbg:#fbe6e2;--sel:#e9f0f5;--acc:#1f3a4d}
+:root[data-theme=dark]{--paper:#11171c;--card:#1a232a;--ink:#e6ecef;--mute:#98a7b1;--line:#34444f;--brand:#27506b;--ok:#5fcf93;--okbg:#17362618;--bad:#ff8a73;--badbg:#3b1d19;--sel:#223646;--acc:#8cc4e6;--hi:#e8a817}
+:root[data-theme=dark] .opt.ok{background:#173626}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:640px;margin:0 auto;padding:0 14px 40px}
@@ -20,17 +23,22 @@ header.top p{margin:0;opacity:.85}
 .q{font-weight:600;margin:0 0 10px}
 .opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer;min-height:46px}
 .opt input{margin-top:4px;width:18px;height:18px;flex:none}
-.opt:has(input:checked){border-color:var(--brand);background:#e9f0f5}
+.opt:has(input:checked){border-color:var(--brand);background:var(--sel)}
 .opt.ok{background:var(--okbg);border-color:var(--ok)}
 .opt.bad{background:var(--badbg);border-color:var(--bad)}
 button,select{font:inherit;border-radius:8px}
 button{border:0;background:var(--brand);color:#fff;padding:14px 18px;width:100%;font-weight:700;cursor:pointer;min-height:48px}
-button.alt{background:#fff;color:var(--brand);border:2px solid var(--brand);margin-top:10px}
-select{width:100%;padding:12px;border:1px solid var(--line);background:#fff;margin:6px 0 14px}
-textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+button.alt{background:var(--card);color:var(--acc);border:2px solid var(--acc);margin-top:10px}
+.np button{margin-bottom:8px}
+input.tx{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;margin-top:6px}
+.b2{height:8px;background:var(--line);border-radius:4px;margin:3px 0 12px}.b2 i{display:block;height:100%;border-radius:4px}.tg{width:auto;min-height:40px;padding:8px 12px;background:rgba(255,255,255,.15)}
+header.top>div{display:flex;justify-content:space-between;align-items:center;gap:10px}
+@media print{header.top,.np,.bar{display:none!important}body{background:#fff!important;color:#000!important}.card{border-color:#999;background:#fff!important;break-inside:avoid}.pb{page-break-before:always}.opt.ok{background:#e3f4ea!important}.opt.bad{background:#fbe6e2!important}}
+select{width:100%;padding:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin:6px 0 14px}
+textarea{background:var(--card);color:var(--ink);width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
 .bar{position:sticky;top:0;z-index:5;background:var(--brand);color:#fff;display:flex;justify-content:space-between;padding:10px 14px;margin:0 -14px;font-weight:700}
 .bar.warn{background:var(--bad)}
-.score{font:700 44px/1 Georgia,serif;color:var(--brand)}
+.score{font:700 44px/1 Georgia,serif;color:var(--acc)}
 .pts label{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
 .pts input{width:20px;height:20px;flex:none}
 .note{color:var(--mute);font-size:14px}
@@ -38,7 +46,7 @@ textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);bo
 </style>
 </head>
 <body>
-<header class="top"><div><h1>Building Construction</h1><p>JSS3 · First term mock Continuous Assessment</p></div></header>
+<header class="top"><div><div><h1>Mock CA</h1><p>JSS3 · First term practice tests</p></div><button class="tg" id="tg" aria-label="Toggle dark mode">🌙</button></div></header>
 <main id="app"></main>
 
 <script>
@@ -48,21 +56,14 @@ textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);bo
  Theory:    [topic, question, max marks, [key points for the marking guide]]
  Topics: tl tools, sp site prep, so setting out, fd foundation, wl walls & materials,
          bd bonding & DPC, fl floors, dw doors & windows, fn finishing */
-const TOP={tl:"Tools & equipment",sp:"Site preparation",so:"Setting out",fd:"Foundation",wl:"Walls & materials",bd:"Bonding & DPC",fl:"Floors",dw:"Doors & windows",fn:"Finishing"};
-const OBJ=[
+const TECH_TOP={tl:"Tools & equipment",sp:"Site preparation",so:"Setting out",fd:"Foundation",wl:"Walls & materials",bd:"Bonding & DPC",fl:"Floors",dw:"Doors & windows",fn:"Finishing",bcs:"Beams, columns & slabs"};
+const TECH_OBJ=[
 ["tl","The tool used for spreading mortar is the","Trowel","Spade","Hoe","Rake"],
-["tl","A plumb rule or level is used to check whether a wall is","Straight and level","Heavy","Wet","Strong"],
-["tl","Which tool is used for cutting blocks?","Block chisel","Headpan","Wheelbarrow","Shovel"],
-["tl","A tool used to carry mortar or concrete on the head is the","Headpan","Trowel","Try square","Plumb rule"],
 ["tl","A hawk is used for holding mortar in place together with a","Trowel","Spade","Rake","Hoe"],
-["tl","A block mould or block making machine is used for making","Sandcrete blocks","Window frames","Floor tiles","Doors"],
-["tl","A builder's square is used to check","Right angles","Weight of blocks","Mortar ratio","Wetness of sand"],
 ["sp","The preliminary work done on a site before actual construction begins is","Site preparation","Finishing","Bonding","Curing"],
 ["sp","Which is NOT a site preparation technique?","Plastering","Levelling the site","Extermination of termites","Felling of trees"],
 ["sp","Which is a mechanical plant used in site preparation?","Bulldozer","Cutlass","Axe","Rake"],
 ["sp","Which is a hand tool used in site preparation?","Cutlass","Bulldozer","Grader","Excavator"],
-["sp","A power chain saw is used for","Felling trees","Mixing mortar","Plastering walls","Measuring angles"],
-["sp","Which machine is used to level a site?","Grader","Wheelbarrow","Trowel","Headpan"],
 ["sp","How a building site is prepared does NOT depend on the","Colour of the paint","Location of the site","Type of building","Type of site"],
 ["sp","Which of these is a type of site?","Swampy or waterlogged","Painted","Plastered","Roofed"],
 ["so","Transferring the dimensions on a building plan onto the ground is called","Setting out","Bonding","Curing","Finishing"],
@@ -90,23 +91,22 @@ const OBJ=[
 ["fd","A foundation is a concrete platform laid below the ground to","Transmit and support the loads of a building","Hold the paint","Let in light","Provide ventilation"],
 ["wl","Bricks are made of","Clay or shale","Cement and gravel","Wood","Glass"],
 ["wl","Bricks are fired in a","Kiln","Mould","Wheelbarrow","Headpan"],
-["wl","Sandcrete blocks are made of cement and sharp sand in the ratio","1:7","1:2","1:3","1:10"],
 ["wl","Cement mortar for walls is mixed in the ratio","1:3","1:7","1:2:4","1:10"],
 ["wl","Which sand is used for mortar for wall construction?","Sharp sand","Soft sand","Clay","Laterite"],
 ["wl","Which sand is used for plastering?","Soft sand","Sharp sand","Gravel","Stone dust"],
 ["wl","The 225 × 225 × 450 mm block is used for","External walls","Internal walls","Floors","Roofs"],
 ["wl","The 150 × 225 × 450 mm block is used for","Internal walls","External walls","Foundations only","Columns only"],
-["wl","Which is a purpose of a wall?","Provide privacy and security","Let water in","Make floors","Cure concrete"],
-["wl","A wall that holds back soil is a","Retaining wall","Partition wall","Garden wall","Party wall"],
-["wl","A wall that carries the load of the roof and upper floors is a","Load-bearing wall","Partition wall","Garden wall","Fence"],
-["wl","A wall that divides the inside of a building into rooms is a","Partition wall","Retaining wall","Foundation wall","Boundary wall"],
+["wl","Walls are continuous ___ structures of a building.","vertical","horizontal","curved","underground"],
+["wl","Which of these is a type of wall?","Cavity wall","Bonding wall","Curing wall","Setting wall"],
+["wl","A wall built of stone is called a","Stone (masonry) wall","Timber wall","Cavity wall","Partition wall"],
+["wl","A wall made of wood is a","Timber wall","Block wall","Concrete wall","Brick wall"],
+["wl","One purpose of walls is to support loads from upper floors and","Roofs","Foundations","Soil","Pegs"],
+["wl","Walls provide thermal and sound","Insulation","Curing","Bonding","Setting out"],
+["wl","Which is NOT a purpose of walls?","Cure concrete","Provide security","Resist damp penetration","Provide good aesthetic appearance"],
+["wl","Hand-made bricks measure","85 × 105 × 215 mm","225 × 225 × 450 mm","150 × 225 × 450 mm","10 × 10 × 10 mm"],
 ["bd","The arrangement of bricks or blocks in a wall to a set pattern is","Bonding","Curing","Plastering","Batching"],
 ["bd","The purpose of bonding is to","Distribute loads uniformly","Make the wall colourful","Keep termites away","Hold the roof"],
 ["bd","Which is NOT a common type of bond?","Pyramid","Stretcher","Header","Flemish"],
-["bd","The bond in which all bricks show their long side is the","Stretcher bond","Header bond","Flemish bond","English bond"],
-["bd","The bond in which all bricks show their short end is the","Header bond","Stretcher bond","Flemish bond","English bond"],
-["bd","Which bond has alternate headers and stretchers in the same course?","Flemish bond","Stretcher bond","Header bond","Plain bond"],
-["bd","Which bond has alternate courses of headers and stretchers?","English bond","Flemish bond","Stretcher bond","Header bond"],
 ["bd","DPC stands for","Damp proof course","Direct plaster cement","Dry plaster coat","Door and pillar core"],
 ["bd","The main purpose of a DPC is to","Stop moisture rising from the soil","Make walls beautiful","Hold the roof","Reduce block cost"],
 ["bd","Which is used as a DPC material?","Bitumen","Sharp sand","Gravel","Cement block"],
@@ -116,7 +116,6 @@ const OBJ=[
 ["fl","A ground floor prevents","Growth of vegetation inside the building","Termites from the roof","Rain on the roof","Cracks in the paint"],
 ["fl","The two main types of floors are solid floors and","Suspended floors","Strip floors","Raft floors","Piled floors"],
 ["fl","A solid floor is also called a","Concrete floor","Timber floor","Suspended floor","Raft floor"],
-["fl","A suspended floor is also called a","Timber floor","Concrete floor","Solid floor","Ground floor"],
 ["fl","A function of an upper floor is to","Accommodate services such as electricity and water","Prevent vegetation growth","Hold the foundation","Cure concrete"],
 ["fl","Which is a floor finishing material?","Terrazzo","Sharp sand","Pegs","Gravel"],
 ["dw","A door is an opening in a wall that","Closes the entrance of a building","Holds the roof","Supports floors","Prevents termites"],
@@ -133,62 +132,242 @@ const OBJ=[
 ["fn","A purpose of internal wall finishing is to","Provide a smooth surface","Prevent termites","Hold the roof","Carry loads"],
 ["fn","A purpose of external wall finishing is to","Prevent damp penetration","Cure concrete","Support floors","Set out the building"],
 ["fn","Which comes FIRST in building construction?","Site preparation","Finishing","Floors, doors and windows","Wall construction"],
-["fn","Which comes right after site preparation?","Setting out","Plastering","Windows","Painting"]
+["fn","Which comes right after site preparation?","Setting out","Plastering","Windows","Painting"],
+["fn","Examples of finishing works include plastering, rendering, painting and","Tiling","Setting out","Excavation","Curing"],
+["bcs","A column (pillar) is an upright member that carries","Compression loads","Paint","Water","Termites"],
+["bcs","A slab is a flat surface whose depth is small compared to its","Length and width","Colour","Weight","Cost"],
+["fl","Mastic asphalt is a","Floor finishing material","Type of foundation","Wall bond","Site tool"],
+["dw","Louvre doors are","Interior doors","Exterior doors","Foundations","Floors"],
+["dw","Sliding and folding doors are","Exterior doors","Wall types","Floors","Foundations"],
+["fd","Plain concrete is used for","Simple jobs","Skyscrapers only","Painting","Roofing"],
+["tl","Which of these is a tool used in wall construction?","Plumb rule or level","Bulldozer","Grader","Excavator"],
+["tl","Which of these is a tool used in wall construction?","Block chisel","Tractor shovel","Power chain saw","Theodolite"],
+["sp","Which of these is a mechanical plant used in site preparation?","Power chain saw","Trowel","Hawk","Plumb rule"],
+["wl","Which of these is a purpose of walls?","Demarcation","Curing","Bonding","Setting out"],
+["wl","Which of these is a purpose of walls?","Security","Plastering","Excavation","Curing"]
 ];
-const THY=[
+const TECH_THY=[
 ["sp","(a) What is site preparation? (b) State three site preparation techniques.",4,["Preliminary work carried out on the site before actual construction begins","Extermination of termites","Felling of trees and cutting of grasses","Removal/uprooting of shrubs, roots, etc.","Levelling of the site"]],
 ["sp","Name four site preparation tools and two mechanical plants used in site preparation.",6,["Cutlass","Rake","Axe","Spade","Hoe / shovel / wheelbarrow / headpan (any)","Bulldozers / excavators / graders / tractor shovels / power chain saw / trucks (any two)"]],
-["so","(a) Define setting out. (b) Name two methods used to set out a three-bedroom bungalow. (c) Name the major equipment for setting out big structures.",5,["Transferring the dimensions on the building plan onto the ground","3-4-5 method (used to establish right angles)","Profile boards and string-line method / builder's square method","Theodolite"]],
+["so","(a) Define setting out. (b) Name two methods used to set out a three-bedroom bungalow. (c) Name the major equipment for setting out big structures.",4,["Transferring the dimensions on the building plan onto the ground","3-4-5 method (used to establish right angles)","Profile boards and string-line method / builder's square method","Theodolite"]],
 ["so","Why must builders be very careful at the setting out stage? List the tools and materials used for simple setting out.",5,["Errors affect the whole building","It ensures the building is in the correct position and dimensions","It prevents costly corrections later","Tools: tapes, profile boards, builder's square, plumb lines","Materials: lines (rope/twine), pegs, nails"]],
-["fd","(a) State the first step in foundation design. (b) Define a foundation. (c) List three types of foundation.",5,["Investigating the type of soil on the site","A concrete platform laid at depth on the earth to transmit and support dead and imposed loads","Strip foundation","Raft / pad / piled / stepped foundation (any)"]],
-["fd","(a) State the ingredients of concrete. (b) Give the three common concrete mixes. (c) What is curing?",6,["Cement, aggregates (sand and gravel) and water","1:3:6 for plain concrete","1:2:4 for normal reinforced concrete","1:1½:3 for dense reinforced concrete","Curing is the hardening process of concrete"]],
-["wl","(a) What are bricks made of? (b) Give the two sizes of sandcrete blocks and where each is used. (c) What is cement mortar made of?",6,["Clay or shale, moulded and fired in kilns","225 × 225 × 450 mm (9 inch) for external walls","150 × 225 × 450 mm (6 inch) for internal walls","Cement, sand and water","Mixed 1:3 to a plastic condition","Sharp sand for wall construction, soft sand for plastering"]],
-["wl","State three purposes of walls and name three types of walls.",6,["Support loads (roof, upper floors)","Provide privacy and security","Protect from weather / divide spaces","Load-bearing wall","Partition wall","Retaining / party / cavity / garden wall (any)"]],
+["fd","(a) State the first step in foundation design. (b) Define a foundation. (c) List three types of foundation.",4,["Investigating the type of soil on the site","A concrete platform laid at depth on the earth to transmit and support dead and imposed loads","Strip foundation","Raft / pad / piled / stepped foundation (any)"]],
+["fd","(a) State the ingredients of reinforced concrete. (b) Give two concrete mixes used for reinforced concrete. (c) What is curing?",4,["Cement, aggregates (sand and gravel) and water","1:2:4 for normal reinforced concrete","1:1½:3 for dense reinforced concrete","Curing is the hardening process of concrete"]],
+["wl","(a) What are bricks made of? (b) Give the two common block sizes and where each is used. (c) What is cement mortar made of and in what ratio?",7,["Clay or shale, moulded in steel moulds and fired in kilns","225 × 225 × 450 mm is used for external walls","150 × 225 × 450 mm is used for internal walls","Cement, sand and water","Mixed in the ratio 1:3 to a plastic condition","Sharp sand is used for mortar for wall construction","Soft sand is used for plastering"]],
+["wl","(a) What are walls? (b) State four purposes of walls. (c) List three types of walls.",7,["Continuous vertical structures of a building that perform functions or provide support for other elements and fittings","Resist damp penetration","Support loads from upper floors and roofs","Provide thermal and sound insulation","Provide good aesthetic appearance / demarcation / security (any)","Types: block, stone (masonry), brick, concrete (any three)","Traditional, timber, partition, cavity walls (any other)"]],
 ["bd","(a) What is bonding? (b) State its purpose. (c) List four common types of bond.",6,["Arrangement of bricks/blocks in a wall to a predetermined pattern","To ensure uniform distribution of any load carried by the wall","Stretcher bond","Header bond","Flemish bond","English bond"]],
 ["bd","(a) What does DPC stand for and what is it? (b) State its purpose. (c) Name three DPC materials.",6,["Damp proof course/membrane","A continuous layer of impermeable material on every foundation wall","To prevent moisture rising from the soil and causing dampness in walls","Cement mortar / asphalt","Polythene sheet / bitumen / mastic","Lead or copper sheet"]],
-["fl","(a) What is a floor? (b) State three functions of a ground floor. (c) Name the two types of floors.",6,["Continuous horizontal platform built between walls to support imposed loads","Withstand imposed live and dead loads","Prevent growth of vegetation inside the building / prevent damp penetration","Be durable and reduce maintenance cost","Solid (concrete) floor","Suspended (timber) floor"]],
-["fn","(a) What are finishing works? (b) Give two purposes of internal wall finishing and two of external wall finishing. (c) List three floor finishing materials.",8,["Works that improve appearance, durability and ease of maintenance","Internal: provide a smooth surface / conceal irregularities","Internal: improve fire resistance / thermal and sound insulation","External: prevent damp penetration","External: provide a pleasing appearance","Floor finishes: mastic asphalt, terrazzo, tiles, wood boards, marble mosaic (any three)"]],
-["dw","(a) Define a door. (b) State three functions of doors. (c) Give two examples each of interior and exterior doors.",7,["An opening in a wall that closes the entrance of a building","Provides security","Means of access and exit / privacy","Facilitates ventilation / admits some natural light / aesthetic purpose (any)","Interior: panel, flush, French, louvre","Exterior: sliding, folding, roller shutter, revolving"]],
-["dw","(a) What are windows? (b) State four functions of windows. (c) What can window frames be made of?",6,["Openings in walls or roof to let in light and air","Security","Ventilation","Beauty","For viewing outside","Wood or metal"]]
+["fl","(a) What is a floor? (b) State three functions of a ground floor. (c) Name the two types of floors.",6,["Continuous horizontal platform built between walls to support imposed loads","Withstand imposed live and dead loads","Prevent growth of vegetation inside the building / prevent damp penetration","Be durable and reduce maintenance cost","Solid (concrete) floor","Suspended floor"]],
+["fn","(a) What are finishing works? (b) Give two purposes of internal wall finishing and two of external wall finishing. (c) List three floor finishing materials.",6,["Works that improve appearance, durability and ease of maintenance","Internal: provide a smooth surface / conceal irregularities","Internal: improve fire resistance / thermal and sound insulation","External: prevent damp penetration","External: provide a pleasing appearance","Floor finishes: mastic asphalt, terrazzo, tiles, wood boards, marble mosaic (any three)"]],
+["dw","(a) Define a door. (b) State three functions of doors. (c) Give two examples each of interior and exterior doors.",6,["An opening in a wall that closes the entrance of a building","Provides security","Means of access and exit / privacy","Facilitates ventilation / admits some natural light / aesthetic purpose (any)","Interior: panel, flush, French, louvre","Exterior: sliding, folding, roller shutter, revolving"]],
+["dw","(a) What are windows? (b) State four functions of windows. (c) What can window frames be made of?",6,["Openings in walls or roof to let in light and air","Security","Ventilation","Beauty","For viewing outside","Wood or metal"]],
+["bcs","(a) What is a column (pillar)? (b) What is a slab?",2,["A column/pillar is an upright compression member","A slab is a flat surface whose depth is small compared to its length and width"]],
+["tl","(a) List five tools or equipment used for wall construction. (b) What is a trowel used for? (c) What is a hawk used for?",7,["Tool 1 correctly listed (trowel, plumb rule or level, mason's hammer, shovels, headpan, pocket rule, block chisel, wheelbarrow, builder's square, try square, hawk, block making machine/mould)","Tool 2 correctly listed","Tool 3 correctly listed","Tool 4 correctly listed","Tool 5 correctly listed","A trowel is used for spreading mortar","A hawk is used for holding mortar in place in conjunction with a trowel"]]
+];
+
+
+/* ============ AGRICULTURAL SCIENCE (from the notes on packaging, branding and pricing) ============ */
+const AG_TOP={pk:"Packaging in agriculture",br:"Branding",pr:"Pricing"};
+const AG_OBJ=[
+["pk","Packaging is the act of wrapping or enclosing agricultural products in a suitable","material","market","brand","price"],
+["pk","Which is a purpose of packaging?","To protect products from damage during transport from the farm to stores and markets","To increase the cost of production","To set the price of the product","To increase supply"],
+["pk","Packaging protects farm products from damage as a result of","Bad weather","High price","Low supply","Advertising"],
+["pk","Packaging protects farm products from","Contamination","Branding","Pricing","Demand"],
+["pk","Packaging makes agricultural products easier to handle, store and more ___ in shops.","Attractive","Expensive","Scarce","Seasonal"],
+["pk","The packaging used for a product must be","Suitable for the product","The same for all products","Always made of glass","Always made of metal"],
+["pk","Packaging material for animal products should be","Different from materials used for packaging plants","The same as for plants","Always jute","Always paper"],
+["pk","A packaging material must be capable of preventing farm products from","Breakage, leakage and damage","Being sold","Being priced","Being branded"],
+["pk","A packaging material must be easily","Disposable","Advertised","Priced","Branded"],
+["pk","Jute or calico sacks are used for packaging","Dried agricultural products","Cutlasses","Tractors","Hoes"],
+["pk","Plastic or polythene bags are used for packaging","Flour","Tractors","Rakes","Hoes"],
+["pk","Brown kraft paper is used for packaging small quantities of","Dried grains such as rice and beans","Tractors","Live animals","Fertilizer"],
+["pk","Which of these is a packaging material for agricultural products?","Baskets","Hoes","Cutlasses","Tractors"],
+["pk","Which of these is NOT a packaging material?","Cutlass","Wooden crates","Glass bottles","Metal drums"],
+["pk","Which of these is a packaging material?","Wooden crates","Rake","Spade","Tractor"],
+["br","Branding is the activity of giving a particular ___ to goods and services so that people will be attracted to them.","Name and image","Weight","Colour only","Price tag"],
+["br","Branding helps in easy identification of","Agricultural products","Soil types","Farm tools","Weather"],
+["br","Branding helps the buyer to easily","Remember what they want to buy","Pay less","Grow crops","Store goods"],
+["br","Branding adds a measure of ___ to the product.","Prestige","Cost","Weight","Waste"],
+["br","Branding helps in the maintenance of","Quality","Seasons","Supply","Demand"],
+["br","A producer may enjoy some ___ when goods are branded.","Monopoly","Loss","Shortage","Rent"],
+["br","Branding prevents product","Adulteration","Packaging","Pricing","Advertising"],
+["br","Which of these is an advantage of branding?","It helps in the sale of farm produce","It increases the cost of producing","It causes confusion among customers","Some products are difficult to brand"],
+["br","Which of these is a disadvantage of branding?","It increases the cost of producing","It helps in easy identification of products","It adds prestige to the product","It helps in the sale of farm produce"],
+["br","Some products, such as vegetables and fruits, are difficult to","Brand","Grow","Weigh","Count"],
+["br","Branding can cause ___ among customers.","Confusion","Prestige","Profit","Identification"],
+["br","Producers find it difficult to maintain consistent ___ of branded products.","Quality","Name","Price","Weight"],
+["pr","The amount of money paid for a product by people who desire to buy it is called its","Price","Supply","Demand","Market"],
+["pr","A market is described as a specific place where producers and buyers meet for","Exchange","Branding","Packaging","Advertising"],
+["pr","The price of any agricultural product depends on the ___ in which it is produced.","Environment","Colour","Name","Bag"],
+["pr","The total quantity of a product that producers offer for sale in the market is its","Supply","Demand","Price","Branding"],
+["pr","The total quantity of a product desired by a customer at a particular price is its","Demand","Supply","Market","Cost"],
+["pr","When there is a shortage of a product in the market, its price will be","High","Low","Zero","Fixed"],
+["pr","A shortage of a product in the market leads to ___ supply of the product.","Low","High","Large","Excess"],
+["pr","When the supply of an agricultural product is high, its price tends to be","Low","High","Fixed","Zero"],
+["pr","When supply is high, some producers will sell at a low price to","Attract buyers","Reduce quality","Avoid packaging","Increase cost"],
+["pr","Which of these is a factor that determines the pricing of agricultural products?","Cost of production","Height of the farmer","Colour of the shop","Size of the shopping bag"],
+["pr","Which of these is NOT a factor that determines the pricing of agricultural products?","Colour of the farmer's clothes","Seasons","Quality of the product","Cost of production"],
+["pr","Quantity of product, quality of product and seasons are all factors that determine","Pricing","Packaging","Branding","Advertising"],
+["pr","Demand and supply determine the ___ of an agricultural product.","Price","Colour","Name","Bag"],
+["pr","Market prices are one of the factors that determine the ___ of agricultural products.","Pricing","Packaging","Colour","Name"]
+];
+const AG_THY=[
+["pk","(a) What is packaging? (b) State three purposes of packaging.",4,["Wrapping or enclosing agricultural products in a suitable material that protects them when transported from farms to markets and displayed in shops","To protect the product from damage when transported from the farm to stores and markets","To protect farm products from damage as a result of bad weather","To protect farm products from contamination","Makes agricultural products easier to handle, store and more attractive in shops"]],
+["pk","State four criteria for selecting packaging materials.",4,["The packaging must be suitable for the product","Packaging material for animal products should be different from that for plants","It must be capable of preventing breakage, leakage and damage to the farm product","It must be easily disposable"]],
+["pk","List five types of packaging materials for agricultural products.",5,["Jute or calico sacks (dried agricultural products)","Plastic or polythene bags (flour)","Brown kraft paper (small quantities of dried grains such as rice, beans)","Hard plastic container","Plastic wrappers","Wooden crates","Plastic bottles","Glass bottles","Metal drums","Baskets"]],
+["br","(a) What is branding? (b) State four advantages of branding.",5,["Giving a particular name and image to goods and services so that people are attracted to them and want to buy them","Easy identification of agricultural products","Helps the buyer to easily remember what they want to buy","Adds a measure of prestige to the product","Helps in maintenance of quality","Producer may enjoy some monopoly","Prevents product adulteration","Helps the sale of farm produce"]],
+["br","State three disadvantages of branding.",3,["It increases the cost of producing","Some products are difficult to brand, e.g. vegetables and fruits","It causes confusion among customers","Producers find it difficult to maintain consistent quality"]],
+["pr","(a) Define the price of an agricultural product. (b) What is a market? (c) On what does the price of any agricultural product depend?",3,["The amount of money to be paid for a product by people who desire to buy it","A specific place where producers and buyers meet for exchange","The environment in which it is produced"]],
+["pr","Define (a) supply and (b) demand.",2,["Supply is the total quantity of the product that producers offer for sale in the market","Demand is the total quantity of the product desired by a customer at a particular price"]],
+["pr","Explain how shortage and high supply of a product affect its price.",4,["Shortage leads to low supply and many people will want the product","Some traders will be prepared to pay extra money, so the price will be high","High supply means a large quantity of the product is in the market","Some producers will be willing to sell at a low price to attract buyers"]],
+["pr","State four factors that determine the pricing of agricultural products.",4,["Cost of production","Quantity of product","Quality of product","Demand and supply","Market prices","Seasons"]]
+];
+
+
+/* ============ CIVIC EDUCATION (from the notes on the constitution and Nigeria's constitutions, weeks 1-5) ============ */
+const CV_TOP={cn:"The constitution: meaning and types",cf:"Clifford Constitution",ri:"Richards Constitution",mp:"Macpherson Constitution (1951)",ly:"Lyttelton Constitution (1954)",in:"1960 Independence Constitution",rp:"1963 Republican Constitution"};
+const CV_OBJ=[
+["cn","A constitution is a body of rules and regulations by which the citizens of a country are","Governed or ruled","Taxed","Educated","Employed"],
+["cn","The constitution defines the powers and functions of the president, governors, and","Chairmen and councillors of local government","Farmers","Teachers","Traders"],
+["cn","Which of these is a type of constitution?","Written constitution","Painted constitution","Drawn constitution","Spoken constitution"],
+["cn","A written constitution is a body of rules and regulations written in a","Single document","Newspaper","Speech","Song"],
+["cn","An unwritten constitution is a body of rules that are NOT written in a","Single document","Party","Court","Market"],
+["cn","Which of these countries operate a written constitution?","America and Nigeria","Britain and Israel","Britain and Nigeria","America and Israel"],
+["cn","Which of these countries operate an unwritten constitution?","Britain and Israel","America and Nigeria","America and Britain","Nigeria and Israel"],
+["cn","A constitution that is very easy to amend is called","Flexible","Rigid","Federal","Unitary"],
+["cn","Most unwritten constitutions are","Flexible","Rigid","Federal","Unitary"],
+["cn","A constitution that is very difficult to amend or change is called","Rigid","Flexible","Unwritten","Unitary"],
+["cn","Most written constitutions are","Rigid","Flexible","Unwritten","Unitary"],
+["cn","A constitution that divides the power of government between the central, state and local governments is","Federal","Unitary","Flexible","Unwritten"],
+["cn","A good example of a country with a federal constitution is","Nigeria and America","France","Britain","Israel"],
+["cn","In a unitary constitution, there is only","Central government","State government","Local government","Three levels of government"],
+["cn","A good example of a country with a unitary constitution is","France","America","Nigeria","Nigeria and America"],
+["cf","The Clifford Constitution was named after","Governor Hugh Clifford","Sir John Macpherson","Richard","Lyttelton"],
+["cf","Hugh Clifford represented the Queen of England in Nigeria before independence in","1960","1951","1954","1963"],
+["cf","The Clifford Constitution allowed the formation of political parties, for example the","Nigerian National Democratic Party (NNDP)","INEC","SIEC","Judicial Service Commission"],
+["cf","The Clifford Constitution provided for the establishment of","Newspapers","Regional premiers","A federal capital territory","A prime minister"],
+["cf","Which constitution introduced the elective principle?","Clifford Constitution","Richards Constitution","Macpherson Constitution","Lyttelton Constitution"],
+["cf","The Clifford Constitution provided for an executive council and a ___ council.","Legislative","Judicial","Electoral","Federal"],
+["cf","The Clifford Constitution established a central legislative council made up of members from the colony and the","Southern Protectorate","Northern Protectorate","Eastern region","Western region"],
+["cf","Under the Clifford Constitution, the elective principle was limited to Lagos and","Calabar","Kano","Ibadan","Enugu"],
+["cf","A disadvantage of the Clifford Constitution is that the governor had","Veto power","No power","Been elected","No council"],
+["cf","Which group was excluded from the legislative council under the Clifford Constitution?","Northerners","Southerners","Easterners","Westerners"],
+["cf","Under the Clifford Constitution, no Nigerian was found in the","Executive council","Legislative council","Newspapers","Political parties"],
+["cf","The Clifford Constitution increased Nigerian participation in government","To a limited extent","Completely","Not at all","Totally"],
+["ri","The Richards Constitution replaced the","Clifford Constitution","Macpherson Constitution","Lyttelton Constitution","1960 Independence Constitution"],
+["ri","The Richards Constitution was made mainly to promote the ___ of Nigeria.","Unity","Division","Wealth","Weather"],
+["ri","The Richards Constitution divided Nigeria into","Three unequal regions","Two equal regions","Four regions","Three equal regions"],
+["ri","The three regions created by the Richards Constitution were","East, West and North","East, West and South","North, South and Central","Lagos, East and West"],
+["ri","The Richards Constitution established executive and legislative councils in the","Regions","Villages","States","Federal capital"],
+["ri","Which group dominated the executive council under the Richards Constitution?","Europeans","Nigerians","Northerners","Judges"],
+["ri","An advantage of the Richards Constitution is that it gave Nigerians the power to","Have a say in their own affairs","Make the constitution fully by themselves","Appoint premiers","Remove the governor"],
+["ri","The Richards Constitution laid the foundation for","Federalism","A unitary system","A republic","A written constitution"],
+["ri","A disadvantage of the Richards Constitution is that it carried on the ___ principle, which was difficult to operate.","Elective","Federal","Republican","Parliamentary"],
+["mp","The Macpherson Constitution was named after","Sir John Macpherson","Hugh Clifford","Richard","Lyttelton"],
+["mp","The Macpherson Constitution replaced the","Richards Constitution","Clifford Constitution","Lyttelton Constitution","1963 Republican Constitution"],
+["mp","The Macpherson Constitution was introduced in","1951","1922","1954","1960"],
+["mp","The Macpherson Constitution continued with the three unequal regions, namely","East, West and North","East, West and South","North, South and Central","Lagos, East and West"],
+["mp","The Macpherson Constitution created a central","Executive council","Premier","Federal capital","Supreme Court"],
+["mp","Under the Macpherson Constitution, Nigerians were appointed into the executive council as","Ministers","Premiers","Governors","Speakers"],
+["mp","The Macpherson Constitution retained the elective principle introduced by the","Clifford Constitution","Richards Constitution","Lyttelton Constitution","Independence Constitution"],
+["mp","The Macpherson Constitution encouraged the formation of","Political parties","Newspapers","Regional premiers","A federal capital"],
+["mp","The Macpherson Constitution created, for the first time, the","House of Representatives","Judicial Service Commission","Federal capital territory","Post of premier"],
+["ly","The Lyttelton Constitution was introduced in","1954","1951","1922","1960"],
+["ly","The Lyttelton Constitution established a ___ system of government.","Federal","Unitary","Presidential","Military"],
+["ly","The Lyttelton Constitution made provision for the post of a speaker of the","House of Representatives","Executive council","Supreme Court","Senate"],
+["ly","The Lyttelton Constitution created the post of ___ for each region.","Premier","Prime minister","President","Governor general"],
+["ly","The Lyttelton Constitution established a federal capital territory at","Lagos","Calabar","Kano","Ibadan"],
+["ly","Under the Lyttelton Constitution, each region had its own civil service and","Judiciary","Army","Newspaper","Navy"],
+["ly","Which constitution gave birth to the federal system of government in Nigeria?","Lyttelton Constitution","Clifford Constitution","Richards Constitution","Macpherson Constitution"],
+["ly","A disadvantage of the Lyttelton Constitution is that no provision was made for the post of ___ at the centre.","Prime minister","Premier","Speaker","Governor"],
+["ly","Under the Lyttelton Constitution, the ministers were loyal to the","Region","Centre","Queen","Parliament"],
+["ly","The Lyttelton Constitution created the office of a speaker and a deputy in the","Region","Federal capital","Supreme Court","Executive council"],
+["in","Under the 1960 Independence Constitution, the governor general was the ___ head of state.","Ceremonial","Executive","Military","Elected"],
+["in","Under the 1960 Independence Constitution, the head of government and administration was the","Prime minister","Governor general","Premier","Speaker"],
+["in","The 1960 Independence Constitution provided for a ___ system of government.","Parliamentary","Presidential","Military","Unitary"],
+["in","Fundamental ___ rights were written into the 1960 Independence Constitution.","Human","Animal","Party","Regional"],
+["in","The 1960 Independence Constitution was a ___ constitution.","Rigid","Flexible","Unwritten","Unitary"],
+["in","An advantage of the 1960 Independence Constitution is that it ushered ___ for Nigeria.","Independence","A republic","Military rule","Federalism"],
+["in","The 1960 Independence Constitution provided the procedure for the appointment of","Supreme Court judges","Governors","Premiers","Prime ministers"],
+["in","A weakness of the 1960 Independence Constitution is that Nigerians did not take part in","Writing the constitution","Voting for independence","Electing the parliament","Choosing the prime minister"],
+["in","The Queen of England still being head of state under the 1960 Independence Constitution gave room for","Interference","Independence","Unity","Elections"],
+["rp","Under the 1963 Republican Constitution, the head of state was no longer the","Queen of England","Prime minister","Premier","Speaker"],
+["rp","The 1963 Republican Constitution made the Supreme Court the highest court of appeal instead of the","Privy Council in London","Executive council","Legislative council","High Court"],
+["rp","The 1963 Republican Constitution retained the ___ system of government.","Parliamentary","Presidential","Military","Unitary"],
+["rp","Under the 1963 Republican Constitution, the head of state was elected by the","Parliament","Queen","Governor","Premier"],
+["rp","The 1963 Republican Constitution was the first constitution fully made by","Nigeria","Britain","The Queen","The governor"],
+["rp","The 1963 Republican Constitution gave Nigeria a ___ form of government.","Republican","Colonial","Military","Unitary"],
+["rp","A weakness of the 1963 Republican Constitution is that there was no supremacy of the constitution but supremacy of the","Parliament","Courts","Queen","Governor"],
+["rp","Under the 1963 Republican Constitution, the prime minister was accountable to the parliament and not to the","People","Queen","Governor","Courts"]
+];
+const CV_THY=[
+["cn","(a) What is a constitution? (b) State four types of constitution.",5,["A body of rules and regulations by which the citizens of a country are governed or ruled","Written constitution","Unwritten constitution","Rigid constitution","Flexible constitution","Federal constitution","Unitary constitution"]],
+["cn","Differentiate between a written and an unwritten constitution, giving one example of each.",4,["Written: rules and regulations written in a single document","Unwritten: rules and regulations not written in a single document","Example of written: America or Nigeria","Example of unwritten: Britain or Israel"]],
+["cn","Differentiate between a rigid and a flexible constitution.",4,["Rigid: very difficult to amend or change","Most written constitutions are rigid","Flexible: very easy to amend","Most unwritten constitutions are flexible"]],
+["cn","Differentiate between a federal and a unitary constitution, giving one example of each.",4,["Federal: divides the power of government between the central, state and local governments","Example of federal: Nigeria or America","Unitary: only central government exists; state and local governments do not exist","Example of unitary: France"]],
+["cf","(a) After whom was the Clifford Constitution named? (b) State three features of the Clifford Constitution.",4,["Governor Hugh Clifford, who represented the Queen of England in Nigeria before independence","Allowed the formation of political parties, e.g. the Nigerian National Democratic Party (NNDP)","Provided for the establishment of newspapers","Introduced the elective principle","Provided for an executive council","Provided for a legislative council"]],
+["cf","State three advantages and three disadvantages of the Clifford Constitution.",6,["Advantage: established a central legislative council of members from the colony and Southern Protectorate","Advantage: increased Nigerian participation in government, though only to a limited extent","Advantage: the elective principle was limited to Lagos and Calabar, which had elected representatives","Disadvantage: the governor had veto power","Disadvantage: northerners were excluded from the legislative council","Disadvantage: no Nigerian was found in the executive council, only the whites"]],
+["ri","(a) What was the Richards Constitution mainly made to promote? (b) State three features of the Richards Constitution.",4,["To promote the unity of Nigeria and encourage Nigerians' participation in their own affairs","Divided Nigeria into three unequal regions: East, West and North","Established executive and legislative councils in the regions","The executive council was dominated by Europeans"]],
+["ri","State two advantages and three disadvantages of the Richards Constitution.",5,["Advantage: gave Nigerians the power to have a say in their own affairs","Advantage: laid the foundation for federalism in Nigeria","Disadvantage: carried on the elective principle, which was difficult to operate","Disadvantage: no Nigerian was found in the executive council","Disadvantage: the Europeans still dominated the executive council"]],
+["mp","(a) After whom was the Macpherson Constitution named? (b) State three features. (c) State three advantages.",7,["Sir John Macpherson, who replaced the Richards Constitution in 1951","Continued with the three unequal regions: East, West and North","Created a central executive council","Nigerians were appointed into the executive council as ministers","Retained the elective principle introduced by the Clifford Constitution","Encouraged the formation of political parties in Nigeria","Created for the first time the House of Representatives"]],
+["ly","State three features and three advantages of the Lyttelton Constitution of 1954.",6,["Feature: established a federal system of government","Feature: provided for the post of a speaker of the House of Representatives","Feature: created the post of premier for each region","Advantage: gave birth to the federal system of government in Nigeria","Advantage: established a federal capital territory (Lagos)","Advantage: each region had its own civil service and judiciary","Advantage: created the office of a speaker and a deputy in the region"]],
+["ly","State three disadvantages of the Lyttelton Constitution.",3,["No provision was made for the post of a prime minister at the central level","The governor general still had veto power","The ministers were loyal to the region"]],
+["in","State four features of the 1960 Independence Constitution.",4,["The governor general was the ceremonial head of state","The prime minister was the head of government and administration","It provided for a parliamentary system of government","Fundamental human rights were written into the constitution","It was a rigid constitution"]],
+["in","State three advantages and two disadvantages of the 1960 Independence Constitution.",5,["Advantage: it ushered independence for Nigeria","Advantage: it made provision for human rights","Advantage: it provided the procedure for the appointment of Supreme Court judges","Disadvantage: it was imposed on Nigerians, who did not take part in writing it","Disadvantage: the Queen of England was still head of state, which gave room for interference"]],
+["rp","State four features of the 1963 Republican Constitution.",4,["The Queen of England was no longer the head of state","The Supreme Court became the highest court of appeal instead of the Privy Council in London","It retained the parliamentary system of government","It abolished the Judicial Service Commission"]],
+["rp","State three advantages and two disadvantages of the 1963 Republican Constitution.",5,["Advantage: an elected head of state replaced the Queen of England","Advantage: the first constitution fully made by Nigeria","Advantage: gave Nigeria a republican form of government","Disadvantage: no supremacy of the constitution, but supremacy of the parliament","Disadvantage: the prime minister was accountable to the parliament and not to the people"]]
 ];
 
 /* ============ APP ============ */
+const SUBJECTS={
+ tech:{name:"Basic Technology",short:"Basic Tech",TOP:TECH_TOP,OBJ:TECH_OBJ,THY:TECH_THY},
+ agric:{name:"Agricultural Science",short:"Agric",TOP:AG_TOP,OBJ:AG_OBJ,THY:AG_THY},
+ civic:{name:"Civic Education",short:"Civic",TOP:CV_TOP,OBJ:CV_OBJ,THY:CV_THY}
+};
+let TOP,OBJ,THY,SUBJ="tech";
+const setSub=k=>{SUBJ=k;({TOP,OBJ,THY}=SUBJECTS[k])};setSub("tech");
 const $=s=>document.querySelector(s), app=$("#app"), MINS=45, NOBJ=15, NTHY=3;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 let S=null,timer=null;
-const hist=()=>{try{return JSON.parse(localStorage.getItem("jss3bc")||"[]")}catch(e){return[]}};
-const saveHist=h=>{try{localStorage.setItem("jss3bc",JSON.stringify(h.slice(0,5)))}catch(e){}};
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const hist=()=>{try{return JSON.parse(lsGet("jss3hist2")||"[]")}catch(e){return[]}};
+const saveRec=r=>{const h=hist(),i=h.findIndex(x=>x.id===r.id);if(i>=0)h[i]=r;else h.unshift(r);lsSet("jss3hist2",JSON.stringify(h.slice(0,200)))};
+const tg=$("#tg"),curTheme=()=>document.documentElement.dataset.theme;
+const icon=()=>tg.textContent=curTheme()==="dark"?"☀️":"🌙";icon();
+tg.onclick=()=>{const n=curTheme()==="dark"?"light":"dark";document.documentElement.dataset.theme=n;try{localStorage.setItem("jss3theme",n)}catch(e){}icon()};
 
 function home(){
-  clearInterval(timer);S=null;
+  clearInterval(timer);S=null;app.onchange=app.oninput=null;
   const h=hist();
   app.innerHTML=`<div class="card"><h2 style="margin-top:0">Start a mock test</h2>
-  <p class="note">${NOBJ} objective + ${NTHY} theory questions, ${MINS} minutes. Questions are drawn at random from a bank of ${OBJ.length} objective and ${THY.length} theory questions, so every attempt is different.</p>
+  <label for="s">Subject</label>
+  <select id="s">${Object.entries(SUBJECTS).map(([k,v])=>`<option value="${k}" ${k===SUBJ?"selected":""} ${v.OBJ.length?"":"disabled"}>${v.name}</option>`).join("")}</select>
+  <p class="note">${NOBJ} objective + ${NTHY} theory questions, ${MINS} minutes, drawn at random from ${OBJ.length} objective and ${THY.length} theory questions.</p>
   <label for="t">Topic</label>
   <select id="t"><option value="all">All topics (standard test)</option>${Object.entries(TOP).map(([k,v])=>`<option value="${k}">${v} only</option>`).join("")}</select>
-  <button id="go">Start test</button></div>
-  ${h.length?`<div class="card"><b>Recent objective scores</b>${h.map(x=>`<div class="note">${esc(x.d)} · ${esc(x.t)} · ${x.s}/${x.n}</div>`).join("")}</div>`:""}`;
+  <button id="go">Start test</button><button class="alt" id="pp">Print a paper with answer key</button><button class="alt" id="rp">📊 My report (${h.length} test${h.length===1?"":"s"})</button></div>`;
+  $("#s").onchange=e=>{setSub(e.target.value);home()};
   $("#go").onclick=()=>start($("#t").value);
+  $("#pp").onclick=()=>printPaper($("#t").value);$("#rp").onclick=report;
 }
 
-function start(topic){
-  const f=a=>topic==="all"?a:a.filter(q=>q[0]===topic);
-  let th=f(THY);if(!th.length)th=THY;
-  S={topic,done:false,end:Date.now()+MINS*60000,
-    obj:shuf(f(OBJ)).slice(0,NOBJ).map(q=>({t:q[0],q:q[1],a:q[2],o:shuf(q.slice(2)),p:null})),
-    thy:shuf(th).slice(0,NTHY).map(q=>({t:q[0],q:q[1],max:q[2],pts:q[3],txt:"",tk:[]}))};
-  scrollTo(0,0);renderTest();
-  timer=setInterval(tick,1000);tick();
+const pool=topic=>{const f=a=>topic==="all"?a:a.filter(q=>q[0]===topic);let th=f(THY);if(!th.length)th=THY;return{o:shuf(f(OBJ)).slice(0,NOBJ),t:shuf(th).slice(0,NTHY)}};
+const mkO=q=>({src:q,t:q[0],q:q[1],a:q[2],o:shuf(q.slice(2)),p:null});
+const mkT=q=>({t:q[0],q:q[1],max:q[2],pts:q[3],txt:"",tk:[]});
+function begin(o,t,mins,label){
+  S={label,subj:SUBJ,id:Date.now(),t0:Date.now(),done:false,end:Date.now()+mins*60000,obj:o.map(mkO),thy:t.map(mkT)};
+  scrollTo(0,0);renderTest();timer=setInterval(tick,1000);tick();
 }
+const start=topic=>{const p=pool(topic);begin(p.o,p.t,MINS,topic==="all"?"All topics":TOP[topic])};
 
 function renderTest(){
   app.innerHTML=`<div class="bar" id="bar"><span id="tm"></span><span id="pr"></span></div>
   <h2>Section A: Objective</h2>
   ${S.obj.map((q,i)=>`<div class="card"><div class="tag">Question ${i+1} · ${TOP[q.t]}</div><p class="q">${esc(q.q)}</p>
   ${q.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" data-i="${i}" value="${j}"><span>${esc(o)}</span></label>`).join("")}</div>`).join("")}
-  <h2>Section B: Theory</h2><p class="note">Write your answers here. You will mark them yourself against the guide after submitting.</p>
-  ${S.thy.map((q,i)=>`<div class="card"><div class="tag">Theory ${i+1} · ${q.max} marks</div><p class="q">${esc(q.q)}</p><textarea data-t="${i}" placeholder="Type your answer…"></textarea></div>`).join("")}
+  ${S.thy.length?`<h2>Section B: Theory</h2><p class="note">Write your answers here. You will mark them yourself against the guide after submitting.</p>
+  ${S.thy.map((q,i)=>`<div class="card"><div class="tag">Theory ${i+1} · ${q.max} marks</div><p class="q">${esc(q.q)}</p><textarea data-t="${i}" placeholder="Type your answer…"></textarea></div>`).join("")}`:""}
   <button id="sub">Submit test</button>`;
   app.onchange=e=>{const i=e.target.dataset.i;if(i!==undefined&&!S.done){S.obj[i].p=+e.target.value;prog()}};
   app.oninput=e=>{const t=e.target.dataset.t;if(t!==undefined&&!S.done)S.thy[t].txt=e.target.value};
@@ -209,35 +388,74 @@ function submit(auto){
   if(!auto&&un&&!confirm(`${un} objective question(s) unanswered. Submit anyway?`))return;
   clearInterval(timer);S.done=true;
   S.score=S.obj.filter(q=>q.o[q.p]===q.a).length;
-  const h=hist();h.unshift({d:new Date().toLocaleDateString(),t:S.topic==="all"?"All topics":TOP[S.topic],s:S.score,n:S.obj.length});saveHist(h);
+  const tp={};S.obj.forEach(q=>{const c=tp[q.t]=tp[q.t]||[0,0];c[1]++;if(q.o[q.p]===q.a)c[0]++});
+  S.rec={id:S.id,ts:Date.now(),subj:S.subj,label:S.label,s:S.score,n:S.obj.length,sec:Math.round((Date.now()-S.t0)/1000),tp,th:null,tmax:S.thy.reduce((a,q)=>a+q.max,0)};saveRec(S.rec);
   scrollTo(0,0);renderResult(auto);
 }
 
 function renderResult(auto){
   const n=S.obj.length,pc=Math.round(S.score/n*100);
   const tmax=S.thy.reduce((a,q)=>a+q.max,0);
-  app.onchange=e=>{const i=e.target.dataset.i,k=e.target.dataset.k;if(k!==undefined){S.thy[i].tk[k]=e.target.checked;calc()}};
+  const missed=S.obj.filter(q=>q.o[q.p]!==q.a);
+  app.onchange=e=>{const i=e.target.dataset.i,k=e.target.dataset.k;if(k!==undefined){S.thy[i].tk[k]=e.target.checked;calc(true)}};
   app.oninput=null;
   app.innerHTML=`${auto?`<div class="card"><b>Time is up.</b> Your test was submitted automatically.</div>`:""}
   <div class="card"><div class="tag">Objective score</div><div class="score">${S.score}/${n}</div><p class="note">${pc}% · ${pc>=70?"Excellent work.":pc>=50?"Good, keep practising the topics you missed.":"Revise the topics below and try again."}</p>
-  <div class="tag">Theory (self-marked)</div><b id="th">0 / ${tmax}</b>
-  <div class="tag" style="margin-top:8px">Overall</div><b id="all"></b></div>
+  ${tmax?`<div class="tag">Theory (self-marked)</div><b id="th"></b><div class="tag" style="margin-top:8px">Overall</div><b id="all"></b>`:""}</div>
+  <div class="np">${missed.length?`<button id="retry">Retry the ${missed.length} I missed</button>`:""}<button class="alt" id="prt">Print / save results</button><button class="alt" id="again">Back to start</button></div>
   <h2>Objective review</h2>
   ${S.obj.map((q,i)=>`<div class="card"><div class="tag">Question ${i+1} · ${TOP[q.t]}</div><p class="q">${esc(q.q)}</p>
   ${q.o.map((o,j)=>`<div class="opt ${o===q.a?"ok":j===q.p?"bad":""}"><span>${esc(o)}${o===q.a?" ✓":j===q.p?" ✗ (your answer)":""}</span></div>`).join("")}
   ${q.p===null?`<p class="note">You skipped this one.</p>`:""}</div>`).join("")}
-  <h2>Theory: mark yourself</h2><p class="note">Tick each key point your answer covered. Each point is worth 1 mark, up to the maximum.</p>
+  ${tmax?`<h2>Theory: mark yourself</h2><p class="note">Tick each key point your answer covered. Each point is worth 1 mark, up to the maximum.</p>
   ${S.thy.map((q,i)=>`<div class="card"><div class="tag">Theory ${i+1} · max ${q.max} marks</div><p class="q">${esc(q.q)}</p>
   <div class="ans">${q.txt.trim()?esc(q.txt):"<i>No answer written.</i>"}</div>
-  <div class="pts"><b style="display:block;margin:10px 0 4px">Marking guide</b>${q.pts.map((p,k)=>`<label><input type="checkbox" data-i="${i}" data-k="${k}"><span>${esc(p)}</span></label>`).join("")}</div></div>`).join("")}
-  <button id="again">Take another test</button>`;
-  $("#again").onclick=home;calc();
+  <div class="pts"><b style="display:block;margin:10px 0 4px">Marking guide</b>${q.pts.map((p,k)=>`<label><input type="checkbox" data-i="${i}" data-k="${k}"><span>${esc(p)}</span></label>`).join("")}</div></div>`).join("")}`:""}`;
+  $("#again").onclick=home;$("#prt").onclick=()=>window.print();
+  if($("#retry"))$("#retry").onclick=()=>begin(missed.map(q=>q.src),[],Math.max(5,Math.ceil(missed.length*1.5)),"Retry missed");
+  if(tmax)calc();
 }
-function calc(){
+function calc(sv){
   const tmax=S.thy.reduce((a,q)=>a+q.max,0);
-  const th=S.thy.reduce((a,q)=>a+Math.min(q.max,q.tk.filter(Boolean).length),0);
-  $("#th").textContent=`${th} / ${tmax}`;
-  $("#all").textContent=`${S.score+th} / ${S.obj.length+tmax}`;
+  const t=S.thy.reduce((a,q)=>a+Math.min(q.max,q.tk.filter(Boolean).length),0);
+  if(sv){S.rec.th=t;saveRec(S.rec)}
+  $("#th").textContent=`${t} / ${tmax}`;
+  $("#all").textContent=`${S.score+t} / ${S.obj.length+tmax}`;
+}
+
+function report(){
+  clearInterval(timer);S=null;app.onchange=app.oninput=null;
+  const h=hist(),pc=(a,n)=>n?Math.round(a/n*100):0,mm=t=>`${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
+  const avg=h.length?Math.round(h.reduce((a,r)=>a+pc(r.s,r.n),0)/h.length):0,best=h.reduce((a,r)=>Math.max(a,pc(r.s,r.n)),0);
+  const ts={};h.forEach(r=>Object.entries(r.tp||{}).forEach(([k,v])=>{const key=r.subj+"|"+k,c=ts[key]=ts[key]||[0,0];c[0]+=v[0];c[1]+=v[1]}));
+  const rows=Object.entries(ts).map(([key,v])=>{const[sj,k]=key.split("|"),sb=SUBJECTS[sj]||{short:sj,TOP:{}};return{n:sb.short+" · "+(sb.TOP[k]||k),p:pc(v[0],v[1]),c:v}}).sort((a,b)=>a.p-b.p);
+  app.innerHTML=`<div class="np"><button class="alt" id="bk" style="margin-top:12px">Back</button></div>
+  <h2>Progress report</h2>
+  <div class="card"><label for="nm">Student name</label><input class="tx" id="nm" type="text" value="${esc(lsGet("jss3name")||"")}" placeholder="Type your name">
+  <p class="note" style="margin:10px 0 0">Report date: ${new Date().toLocaleDateString()}</p></div>
+  ${h.length?`<div class="card"><b>Tests taken:</b> ${h.length}<br><b>Average objective score:</b> ${avg}%<br><b>Best objective score:</b> ${best}%</div>
+  <h2>Topics, weakest first</h2><div class="card">${rows.map(r=>`<div class="note">${esc(r.n)}: ${r.p}% (${r.c[0]}/${r.c[1]} correct)</div><div class="b2"><i style="width:${r.p}%;background:${r.p<50?"var(--bad)":r.p<70?"var(--hi)":"var(--ok)"}"></i></div>`).join("")}</div>
+  <h2>All tests</h2>${h.map(r=>`<div class="card"><div class="tag">${new Date(r.ts).toLocaleString()}</div><b>${esc((SUBJECTS[r.subj]||{short:r.subj}).short)} · ${esc(r.label)}</b><br>Objective: ${r.s}/${r.n} (${pc(r.s,r.n)}%)${r.tmax?`<br>Theory (self-marked): ${r.th===null?"not marked":r.th+" / "+r.tmax}`:""}<br><span class="note">Time used: ${mm(r.sec||0)}</span></div>`).join("")}
+  <div class="np"><button id="rpt">Print / save report</button><button class="alt" id="clr">Clear history</button></div>`
+  :`<div class="card">No tests yet. Finish a test and it will appear here.</div>`}`;
+  $("#bk").onclick=home;$("#nm").oninput=e=>lsSet("jss3name",e.target.value);
+  if(h.length){$("#rpt").onclick=()=>window.print();$("#clr").onclick=()=>{if(confirm("Delete all saved test history on this device?")){lsSet("jss3hist2","[]");report()}}}
+  scrollTo(0,0);
+}
+
+function printPaper(topic){
+  const p=pool(topic),L="ABCD",O=p.o.map(q=>({q:q[1],o:shuf(q.slice(2)),a:q[2]}));
+  app.onchange=app.oninput=null;
+  app.innerHTML=`<div class="np"><button id="p1">Print / save as PDF</button><button class="alt" id="bk">Back</button></div>
+  <h2>${SUBJECTS[SUBJ].name}: Mock CA</h2><p>Name: ______________________ Class: JSS3 &nbsp; Time: ${MINS} min</p>
+  <h2>Section A: Objective</h2>
+  ${O.map((q,i)=>`<p class="q">${i+1}. ${esc(q.q)}</p><p>${q.o.map((o,j)=>`${L[j]}. ${esc(o)}`).join(" &nbsp; ")}</p>`).join("")}
+  <h2>Section B: Theory (answer all)</h2>
+  ${p.t.map((q,i)=>`<p class="q">${i+1}. ${esc(q[1])} (${q[2]} marks)</p><div style="height:110px"></div>`).join("")}
+  <div class="pb"></div><h2>Marking guide</h2>
+  <p><b>Section A:</b> ${O.map((q,i)=>`${i+1}${L[q.o.indexOf(q.a)]}`).join(", ")}</p>
+  ${p.t.map((q,i)=>`<p><b>${i+1}.</b> ${q[3].map(esc).join("; ")}</p>`).join("")}`;
+  $("#p1").onclick=()=>window.print();$("#bk").onclick=home;scrollTo(0,0);
 }
 home();
 </script>
