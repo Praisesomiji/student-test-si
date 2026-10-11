@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1f3a4d">
+<title>JSS3 Building Construction – Mock CA</title>
+<style>
+:root{--paper:#f4f6f7;--card:#fff;--ink:#1c2b36;--mute:#5c6b76;--line:#d5dce1;--brand:#1f3a4d;--hi:#e8a817;--ok:#23794a;--okbg:#e3f4ea;--bad:#b3341f;--badbg:#fbe6e2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:0 14px 40px}
+h1{font:700 26px/1.2 Georgia,serif;margin:0 0 6px}
+h2{font:700 18px/1.3 Georgia,serif;margin:22px 0 8px}
+header.top{background:var(--brand);color:#fff;padding:22px 14px 20px;border-bottom:6px solid var(--hi)}
+header.top div{max-width:640px;margin:0 auto}
+header.top p{margin:0;opacity:.85}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}
+.tag{font-size:13px;color:var(--mute);margin-bottom:4px}
+.q{font-weight:600;margin:0 0 10px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer;min-height:46px}
+.opt input{margin-top:4px;width:18px;height:18px;flex:none}
+.opt:has(input:checked){border-color:var(--brand);background:#e9f0f5}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}
+button,select{font:inherit;border-radius:8px}
+button{border:0;background:var(--brand);color:#fff;padding:14px 18px;width:100%;font-weight:700;cursor:pointer;min-height:48px}
+button.alt{background:#fff;color:var(--brand);border:2px solid var(--brand);margin-top:10px}
+select{width:100%;padding:12px;border:1px solid var(--line);background:#fff;margin:6px 0 14px}
+textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+.bar{position:sticky;top:0;z-index:5;background:var(--brand);color:#fff;display:flex;justify-content:space-between;padding:10px 14px;margin:0 -14px;font-weight:700}
+.bar.warn{background:var(--bad)}
+.score{font:700 44px/1 Georgia,serif;color:var(--brand)}
+.pts label{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.pts input{width:20px;height:20px;flex:none}
+.note{color:var(--mute);font-size:14px}
+.ans{background:var(--paper);border-radius:8px;padding:8px 10px;margin-top:8px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>Building Construction</h1><p>JSS3 · First term mock Continuous Assessment</p></div></header>
+<main id="app"></main>
+
+<script>
+/* ============ QUESTION BANK ============
+ Add questions by copying a line.
+ Objective: [topic, question, CORRECT answer, wrong1, wrong2, wrong3]  (options are shuffled automatically)
+ Theory:    [topic, question, max marks, [key points for the marking guide]]
+ Topics: tl tools, sp site prep, so setting out, fd foundation, wl walls & materials,
+         bd bonding & DPC, fl floors, dw doors & windows, fn finishing */
+const TOP={tl:"Tools & equipment",sp:"Site preparation",so:"Setting out",fd:"Foundation",wl:"Walls & materials",bd:"Bonding & DPC",fl:"Floors",dw:"Doors & windows",fn:"Finishing"};
+const OBJ=[
+["tl","The tool used for spreading mortar is the","Trowel","Spade","Hoe","Rake"],
+["tl","A plumb rule or level is used to check whether a wall is","Straight and level","Heavy","Wet","Strong"],
+["tl","Which tool is used for cutting blocks?","Block chisel","Headpan","Wheelbarrow","Shovel"],
+["tl","A tool used to carry mortar or concrete on the head is the","Headpan","Trowel","Try square","Plumb rule"],
+["tl","A hawk is used for holding mortar in place together with a","Trowel","Spade","Rake","Hoe"],
+["tl","A block mould or block making machine is used for making","Sandcrete blocks","Window frames","Floor tiles","Doors"],
+["tl","A builder's square is used to check","Right angles","Weight of blocks","Mortar ratio","Wetness of sand"],
+["sp","The preliminary work done on a site before actual construction begins is","Site preparation","Finishing","Bonding","Curing"],
+["sp","Which is NOT a site preparation technique?","Plastering","Levelling the site","Extermination of termites","Felling of trees"],
+["sp","Which is a mechanical plant used in site preparation?","Bulldozer","Cutlass","Axe","Rake"],
+["sp","Which is a hand tool used in site preparation?","Cutlass","Bulldozer","Grader","Excavator"],
+["sp","A power chain saw is used for","Felling trees","Mixing mortar","Plastering walls","Measuring angles"],
+["sp","Which machine is used to level a site?","Grader","Wheelbarrow","Trowel","Headpan"],
+["sp","How a building site is prepared does NOT depend on the","Colour of the paint","Location of the site","Type of building","Type of site"],
+["sp","Which of these is a type of site?","Swampy or waterlogged","Painted","Plastered","Roofed"],
+["so","Transferring the dimensions on a building plan onto the ground is called","Setting out","Bonding","Curing","Finishing"],
+["so","The major equipment used for setting out big structures is the","Theodolite","Trowel","Hoe","Headpan"],
+["so","The method used to set out right angles on site is the","3-4-5 method","2-3-4 method","1-2-3 method","5-6-7 method"],
+["so","Which is a material used for simple setting out?","Pegs","Bitumen","Terrazzo","Marble"],
+["so","Which tool is used in simple setting out?","Profile boards","Bulldozer","Grader","Block mould"],
+["so","For a simple building on dry, plain land, setting out ends with","Excavation for foundation","Plastering","Roofing","Painting"],
+["so","The final stage after excavation is cleared is the","Application of anti-termite chemicals","Plastering","Roofing","Painting"],
+["so","Anti-termite treatment is needed because termites are","Native to the tropics","Found only in water","Used in concrete","Found only in cities"],
+["so","Builders must be careful at setting out because errors","Affect the whole building","Do not matter","Only affect paint","Can be fixed by painting"],
+["fd","The first step in foundation design is","Investigating the type of soil on the site","Pouring concrete","Buying cement","Plastering"],
+["fd","The stability of a building depends on its","Foundation","Paint","Windows","Door handles"],
+["fd","The principal material used for foundations is","Concrete","Glass","Paint","Timber"],
+["fd","The hardening process of concrete is called","Curing","Batching","Bonding","Rendering"],
+["fd","In concrete, the cement acts as a","Binder","Filler only","Colouring","Roofing sheet"],
+["fd","Sand and gravel in concrete are called","Aggregates","Binders","Membranes","Mortar"],
+["fd","The concrete mix 1:2:4 is used for","Normal reinforced concrete","Plain concrete","Plastering","Painting"],
+["fd","The concrete mix 1:1½:3 is used for","Dense reinforced concrete","Plain concrete","Mortar","Blocks"],
+["fd","A continuous laying of concrete under walls is a","Strip foundation","Pad foundation","Raft foundation","Piled foundation"],
+["fd","The foundation that covers the whole area under a building and is used on swampy land is","Raft foundation","Strip foundation","Pad foundation","Stepped foundation"],
+["fd","An isolated concrete base under a column is a","Pad foundation","Strip foundation","Raft foundation","Stepped foundation"],
+["fd","Which foundation is used for skyscrapers and bridges?","Piled foundation","Strip foundation","Pad foundation","Stepped foundation"],
+["fd","On sloping land, a strip foundation is modified into a","Stepped foundation","Raft foundation","Pad foundation","Piled foundation"],
+["fd","A foundation is a concrete platform laid below the ground to","Transmit and support the loads of a building","Hold the paint","Let in light","Provide ventilation"],
+["wl","Bricks are made of","Clay or shale","Cement and gravel","Wood","Glass"],
+["wl","Bricks are fired in a","Kiln","Mould","Wheelbarrow","Headpan"],
+["wl","Sandcrete blocks are made of cement and sharp sand in the ratio","1:7","1:2","1:3","1:10"],
+["wl","Cement mortar for walls is mixed in the ratio","1:3","1:7","1:2:4","1:10"],
+["wl","Which sand is used for mortar for wall construction?","Sharp sand","Soft sand","Clay","Laterite"],
+["wl","Which sand is used for plastering?","Soft sand","Sharp sand","Gravel","Stone dust"],
+["wl","The 225 × 225 × 450 mm block is used for","External walls","Internal walls","Floors","Roofs"],
+["wl","The 150 × 225 × 450 mm block is used for","Internal walls","External walls","Foundations only","Columns only"],
+["wl","Which is a purpose of a wall?","Provide privacy and security","Let water in","Make floors","Cure concrete"],
+["wl","A wall that holds back soil is a","Retaining wall","Partition wall","Garden wall","Party wall"],
+["wl","A wall that carries the load of the roof and upper floors is a","Load-bearing wall","Partition wall","Garden wall","Fence"],
+["wl","A wall that divides the inside of a building into rooms is a","Partition wall","Retaining wall","Foundation wall","Boundary wall"],
+["bd","The arrangement of bricks or blocks in a wall to a set pattern is","Bonding","Curing","Plastering","Batching"],
+["bd","The purpose of bonding is to","Distribute loads uniformly","Make the wall colourful","Keep termites away","Hold the roof"],
+["bd","Which is NOT a common type of bond?","Pyramid","Stretcher","Header","Flemish"],
+["bd","The bond in which all bricks show their long side is the","Stretcher bond","Header bond","Flemish bond","English bond"],
+["bd","The bond in which all bricks show their short end is the","Header bond","Stretcher bond","Flemish bond","English bond"],
+["bd","Which bond has alternate headers and stretchers in the same course?","Flemish bond","Stretcher bond","Header bond","Plain bond"],
+["bd","Which bond has alternate courses of headers and stretchers?","English bond","Flemish bond","Stretcher bond","Header bond"],
+["bd","DPC stands for","Damp proof course","Direct plaster cement","Dry plaster coat","Door and pillar core"],
+["bd","The main purpose of a DPC is to","Stop moisture rising from the soil","Make walls beautiful","Hold the roof","Reduce block cost"],
+["bd","Which is used as a DPC material?","Bitumen","Sharp sand","Gravel","Cement block"],
+["bd","A DPC is placed in every","Foundation wall","Window","Door","Ceiling"],
+["fl","Floors are continuous horizontal platforms built between walls to","Support imposed loads","Hold paint","Cure concrete","Cut grass"],
+["fl","Which is a function of a ground floor?","Withstand live and dead loads","Accommodate electricity cables only","Let in light","Provide a door"],
+["fl","A ground floor prevents","Growth of vegetation inside the building","Termites from the roof","Rain on the roof","Cracks in the paint"],
+["fl","The two main types of floors are solid floors and","Suspended floors","Strip floors","Raft floors","Piled floors"],
+["fl","A solid floor is also called a","Concrete floor","Timber floor","Suspended floor","Raft floor"],
+["fl","A suspended floor is also called a","Timber floor","Concrete floor","Solid floor","Ground floor"],
+["fl","A function of an upper floor is to","Accommodate services such as electricity and water","Prevent vegetation growth","Hold the foundation","Cure concrete"],
+["fl","Which is a floor finishing material?","Terrazzo","Sharp sand","Pegs","Gravel"],
+["dw","A door is an opening in a wall that","Closes the entrance of a building","Holds the roof","Supports floors","Prevents termites"],
+["dw","A function of doors is","Providing security","Curing concrete","Mixing mortar","Setting out"],
+["dw","Which is an interior door?","Flush door","Roller shutter","Revolving door","Sliding door"],
+["dw","Which is an exterior door?","Roller shutter","Flush door","Panel door","Louvre door"],
+["dw","Revolving doors are mostly used in","Supermarkets and banks","Bedrooms","Kitchens","Toilets"],
+["dw","Windows are openings in walls to let in","Light and air","Mortar","Termites","Sand"],
+["dw","Window frames can be made of","Wood or metal","Sand or gravel","Mortar only","Bitumen"],
+["dw","A function of windows is","Ventilation","Bonding","Excavation","Curing"],
+["fn","Finishing works are carried out to improve appearance, durability and","Ease of maintenance","Cost of cement","Size of blocks","Depth of foundation"],
+["fn","Plastering is done on","Internal walls","Foundations","Roof sheets","Soil"],
+["fn","Rendering is done on","External walls","Internal walls","Floors only","Ceilings only"],
+["fn","A purpose of internal wall finishing is to","Provide a smooth surface","Prevent termites","Hold the roof","Carry loads"],
+["fn","A purpose of external wall finishing is to","Prevent damp penetration","Cure concrete","Support floors","Set out the building"],
+["fn","Which comes FIRST in building construction?","Site preparation","Finishing","Floors, doors and windows","Wall construction"],
+["fn","Which comes right after site preparation?","Setting out","Plastering","Windows","Painting"]
+];
+const THY=[
+["sp","(a) What is site preparation? (b) State three site preparation techniques.",4,["Preliminary work carried out on the site before actual construction begins","Extermination of termites","Felling of trees and cutting of grasses","Removal/uprooting of shrubs, roots, etc.","Levelling of the site"]],
+["sp","Name four site preparation tools and two mechanical plants used in site preparation.",6,["Cutlass","Rake","Axe","Spade","Hoe / shovel / wheelbarrow / headpan (any)","Bulldozers / excavators / graders / tractor shovels / power chain saw / trucks (any two)"]],
+["so","(a) Define setting out. (b) Name two methods used to set out a three-bedroom bungalow. (c) Name the major equipment for setting out big structures.",5,["Transferring the dimensions on the building plan onto the ground","3-4-5 method (used to establish right angles)","Profile boards and string-line method / builder's square method","Theodolite"]],
+["so","Why must builders be very careful at the setting out stage? List the tools and materials used for simple setting out.",5,["Errors affect the whole building","It ensures the building is in the correct position and dimensions","It prevents costly corrections later","Tools: tapes, profile boards, builder's square, plumb lines","Materials: lines (rope/twine), pegs, nails"]],
+["fd","(a) State the first step in foundation design. (b) Define a foundation. (c) List three types of foundation.",5,["Investigating the type of soil on the site","A concrete platform laid at depth on the earth to transmit and support dead and imposed loads","Strip foundation","Raft / pad / piled / stepped foundation (any)"]],
+["fd","(a) State the ingredients of concrete. (b) Give the three common concrete mixes. (c) What is curing?",6,["Cement, aggregates (sand and gravel) and water","1:3:6 for plain concrete","1:2:4 for normal reinforced concrete","1:1½:3 for dense reinforced concrete","Curing is the hardening process of concrete"]],
+["wl","(a) What are bricks made of? (b) Give the two sizes of sandcrete blocks and where each is used. (c) What is cement mortar made of?",6,["Clay or shale, moulded and fired in kilns","225 × 225 × 450 mm (9 inch) for external walls","150 × 225 × 450 mm (6 inch) for internal walls","Cement, sand and water","Mixed 1:3 to a plastic condition","Sharp sand for wall construction, soft sand for plastering"]],
+["wl","State three purposes of walls and name three types of walls.",6,["Support loads (roof, upper floors)","Provide privacy and security","Protect from weather / divide spaces","Load-bearing wall","Partition wall","Retaining / party / cavity / garden wall (any)"]],
+["bd","(a) What is bonding? (b) State its purpose. (c) List four common types of bond.",6,["Arrangement of bricks/blocks in a wall to a predetermined pattern","To ensure uniform distribution of any load carried by the wall","Stretcher bond","Header bond","Flemish bond","English bond"]],
+["bd","(a) What does DPC stand for and what is it? (b) State its purpose. (c) Name three DPC materials.",6,["Damp proof course/membrane","A continuous layer of impermeable material on every foundation wall","To prevent moisture rising from the soil and causing dampness in walls","Cement mortar / asphalt","Polythene sheet / bitumen / mastic","Lead or copper sheet"]],
+["fl","(a) What is a floor? (b) State three functions of a ground floor. (c) Name the two types of floors.",6,["Continuous horizontal platform built between walls to support imposed loads","Withstand imposed live and dead loads","Prevent growth of vegetation inside the building / prevent damp penetration","Be durable and reduce maintenance cost","Solid (concrete) floor","Suspended (timber) floor"]],
+["fn","(a) What are finishing works? (b) Give two purposes of internal wall finishing and two of external wall finishing. (c) List three floor finishing materials.",8,["Works that improve appearance, durability and ease of maintenance","Internal: provide a smooth surface / conceal irregularities","Internal: improve fire resistance / thermal and sound insulation","External: prevent damp penetration","External: provide a pleasing appearance","Floor finishes: mastic asphalt, terrazzo, tiles, wood boards, marble mosaic (any three)"]],
+["dw","(a) Define a door. (b) State three functions of doors. (c) Give two examples each of interior and exterior doors.",7,["An opening in a wall that closes the entrance of a building","Provides security","Means of access and exit / privacy","Facilitates ventilation / admits some natural light / aesthetic purpose (any)","Interior: panel, flush, French, louvre","Exterior: sliding, folding, roller shutter, revolving"]],
+["dw","(a) What are windows? (b) State four functions of windows. (c) What can window frames be made of?",6,["Openings in walls or roof to let in light and air","Security","Ventilation","Beauty","For viewing outside","Wood or metal"]]
+];
+
+/* ============ APP ============ */
+const $=s=>document.querySelector(s), app=$("#app"), MINS=45, NOBJ=15, NTHY=3;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let S=null,timer=null;
+const hist=()=>{try{return JSON.parse(localStorage.getItem("jss3bc")||"[]")}catch(e){return[]}};
+const saveHist=h=>{try{localStorage.setItem("jss3bc",JSON.stringify(h.slice(0,5)))}catch(e){}};
+
+function home(){
+  clearInterval(timer);S=null;
+  const h=hist();
+  app.innerHTML=`<div class="card"><h2 style="margin-top:0">Start a mock test</h2>
+  <p class="note">${NOBJ} objective + ${NTHY} theory questions, ${MINS} minutes. Questions are drawn at random from a bank of ${OBJ.length} objective and ${THY.length} theory questions, so every attempt is different.</p>
+  <label for="t">Topic</label>
+  <select id="t"><option value="all">All topics (standard test)</option>${Object.entries(TOP).map(([k,v])=>`<option value="${k}">${v} only</option>`).join("")}</select>
+  <button id="go">Start test</button></div>
+  ${h.length?`<div class="card"><b>Recent objective scores</b>${h.map(x=>`<div class="note">${esc(x.d)} · ${esc(x.t)} · ${x.s}/${x.n}</div>`).join("")}</div>`:""}`;
+  $("#go").onclick=()=>start($("#t").value);
+}
+
+function start(topic){
+  const f=a=>topic==="all"?a:a.filter(q=>q[0]===topic);
+  let th=f(THY);if(!th.length)th=THY;
+  S={topic,done:false,end:Date.now()+MINS*60000,
+    obj:shuf(f(OBJ)).slice(0,NOBJ).map(q=>({t:q[0],q:q[1],a:q[2],o:shuf(q.slice(2)),p:null})),
+    thy:shuf(th).slice(0,NTHY).map(q=>({t:q[0],q:q[1],max:q[2],pts:q[3],txt:"",tk:[]}))};
+  scrollTo(0,0);renderTest();
+  timer=setInterval(tick,1000);tick();
+}
+
+function renderTest(){
+  app.innerHTML=`<div class="bar" id="bar"><span id="tm"></span><span id="pr"></span></div>
+  <h2>Section A: Objective</h2>
+  ${S.obj.map((q,i)=>`<div class="card"><div class="tag">Question ${i+1} · ${TOP[q.t]}</div><p class="q">${esc(q.q)}</p>
+  ${q.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" data-i="${i}" value="${j}"><span>${esc(o)}</span></label>`).join("")}</div>`).join("")}
+  <h2>Section B: Theory</h2><p class="note">Write your answers here. You will mark them yourself against the guide after submitting.</p>
+  ${S.thy.map((q,i)=>`<div class="card"><div class="tag">Theory ${i+1} · ${q.max} marks</div><p class="q">${esc(q.q)}</p><textarea data-t="${i}" placeholder="Type your answer…"></textarea></div>`).join("")}
+  <button id="sub">Submit test</button>`;
+  app.onchange=e=>{const i=e.target.dataset.i;if(i!==undefined&&!S.done){S.obj[i].p=+e.target.value;prog()}};
+  app.oninput=e=>{const t=e.target.dataset.t;if(t!==undefined&&!S.done)S.thy[t].txt=e.target.value};
+  $("#sub").onclick=()=>submit(false);prog();
+}
+const prog=()=>{const n=S.obj.filter(q=>q.p!==null).length;$("#pr").textContent=`${n}/${S.obj.length} answered`};
+
+function tick(){
+  const r=S.end-Date.now();
+  if(r<=0){submit(true);return}
+  const m=Math.floor(r/60000),s=Math.floor(r%60000/1000);
+  $("#tm").textContent=`⏱ ${m}:${String(s).padStart(2,"0")}`;
+  $("#bar").classList.toggle("warn",r<5*60000);
+}
+
+function submit(auto){
+  const un=S.obj.filter(q=>q.p===null).length;
+  if(!auto&&un&&!confirm(`${un} objective question(s) unanswered. Submit anyway?`))return;
+  clearInterval(timer);S.done=true;
+  S.score=S.obj.filter(q=>q.o[q.p]===q.a).length;
+  const h=hist();h.unshift({d:new Date().toLocaleDateString(),t:S.topic==="all"?"All topics":TOP[S.topic],s:S.score,n:S.obj.length});saveHist(h);
+  scrollTo(0,0);renderResult(auto);
+}
+
+function renderResult(auto){
+  const n=S.obj.length,pc=Math.round(S.score/n*100);
+  const tmax=S.thy.reduce((a,q)=>a+q.max,0);
+  app.onchange=e=>{const i=e.target.dataset.i,k=e.target.dataset.k;if(k!==undefined){S.thy[i].tk[k]=e.target.checked;calc()}};
+  app.oninput=null;
+  app.innerHTML=`${auto?`<div class="card"><b>Time is up.</b> Your test was submitted automatically.</div>`:""}
+  <div class="card"><div class="tag">Objective score</div><div class="score">${S.score}/${n}</div><p class="note">${pc}% · ${pc>=70?"Excellent work.":pc>=50?"Good, keep practising the topics you missed.":"Revise the topics below and try again."}</p>
+  <div class="tag">Theory (self-marked)</div><b id="th">0 / ${tmax}</b>
+  <div class="tag" style="margin-top:8px">Overall</div><b id="all"></b></div>
+  <h2>Objective review</h2>
+  ${S.obj.map((q,i)=>`<div class="card"><div class="tag">Question ${i+1} · ${TOP[q.t]}</div><p class="q">${esc(q.q)}</p>
+  ${q.o.map((o,j)=>`<div class="opt ${o===q.a?"ok":j===q.p?"bad":""}"><span>${esc(o)}${o===q.a?" ✓":j===q.p?" ✗ (your answer)":""}</span></div>`).join("")}
+  ${q.p===null?`<p class="note">You skipped this one.</p>`:""}</div>`).join("")}
+  <h2>Theory: mark yourself</h2><p class="note">Tick each key point your answer covered. Each point is worth 1 mark, up to the maximum.</p>
+  ${S.thy.map((q,i)=>`<div class="card"><div class="tag">Theory ${i+1} · max ${q.max} marks</div><p class="q">${esc(q.q)}</p>
+  <div class="ans">${q.txt.trim()?esc(q.txt):"<i>No answer written.</i>"}</div>
+  <div class="pts"><b style="display:block;margin:10px 0 4px">Marking guide</b>${q.pts.map((p,k)=>`<label><input type="checkbox" data-i="${i}" data-k="${k}"><span>${esc(p)}</span></label>`).join("")}</div></div>`).join("")}
+  <button id="again">Take another test</button>`;
+  $("#again").onclick=home;calc();
+}
+function calc(){
+  const tmax=S.thy.reduce((a,q)=>a+q.max,0);
+  const th=S.thy.reduce((a,q)=>a+Math.min(q.max,q.tk.filter(Boolean).length),0);
+  $("#th").textContent=`${th} / ${tmax}`;
+  $("#all").textContent=`${S.score+th} / ${S.obj.length+tmax}`;
+}
+home();
+</script>
+</body>
+</html>
